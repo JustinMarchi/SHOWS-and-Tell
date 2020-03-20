@@ -1,0 +1,40 @@
+hr{
+    border-bottom-width: 2px;
+    border-color: black;
+    margin-bottom: 1.5rem;
+}
+
+button{
+    margin-top: 3rem;
+    width: 25rem;
+    height: 5rem;
+}
+
+input{
+    margin-top: 6rem;
+}
+
+.row{
+    text-align: center;
+}
+
+#site-title{
+    text-align: center;
+    margin-top: 10rem;
+}
+
+#artistSearch::placeholder{
+    text-align: center;
+}
+
+#citySearch::placeholder{
+    text-align: center;
+}
+
+#cityNameLabel{
+    text-align: center;
+}
+
+#artistNameLabel{
+    text-align: center;
+}

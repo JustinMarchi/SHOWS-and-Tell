@@ -4,10 +4,20 @@ hr{
     margin-bottom: 1.5rem;
 }
 
+tbody{
+    width: 100%;
+}
+
 button{
     margin-top: 3rem;
     width: 25rem;
     height: 5rem;
+}
+
+.noshows{
+    color: red;
+    font-size: 3rem;
+    font-weight: bold;
 }
 
 input{
@@ -16,6 +26,10 @@ input{
 
 .row{
     text-align: center;
+}
+
+.artistHeader{
+    margin-top: 30rem;
 }
 
 #site-title{

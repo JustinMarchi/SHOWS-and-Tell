@@ -1,5 +1,8 @@
 var artistName = "";
 
+
+$(document).ready(function(){
+
 // On click event for Artist search button
 $("#searchBtn").on("click", function(event){
     event.preventDefault();
@@ -10,9 +13,6 @@ $("#searchBtn").on("click", function(event){
     }else{
         renderArtist();
     }
-    $('body, html').animate({
-        scrollTop: $(".bandsInTown").offset().top+220
-      }, 600);
 });
 
 $("#artistSearch").keypress(function(e){
@@ -29,7 +29,7 @@ async function renderArtist() {
         url: artistURL,
         method: "GET"
       })
-      console.log(response);
+    //   console.log(response);
       var {thumb_url, name} = response
       var displayArtistDiv = $("<div class='twelve columns' id='ArtistImg'>");
       var displayName = $("<h3>").text(name);
@@ -96,13 +96,100 @@ async function renderArtist() {
         eventTableBody.append(bodyTableRow);
         }
         
-        
         displayArtistDiv.append(eventTable);
       
-
       $(".bandsInTown").html(displayArtistDiv);
+      $('body, html').animate({
+        scrollTop: $(".bandsInTown").offset().top+310
+      }, 600);
 
+      renderResultsBtns();
 
+};
 
+// Renders the Search Again and See Related Artists buttons
+function renderResultsBtns(){
+    var buttonDiv = $("<div class='twelve columns'>");
+    var searchAgain = $("<button class='button-primary' id='searchAgain'>").text("Search Again");
+    buttonDiv.append(searchAgain);
+    var relatedArtists = $("<button class='button-primary' id='relatedArtists'>").text("See Related Artists");
+    buttonDiv.append(relatedArtists);
+
+    $(".resultsBtns").html(buttonDiv);
+
+};
+
+async function renderRelatedArtists(){
+    var artistURL = "https://cors-anywhere.herokuapp.com/https://tastedive.com/api/similar?q="+artistName+"&type=music&info=1&limit=5&k=360014-InClassP-M0LL63LP";
+    var artistResponse = await $.ajax({
+        url: artistURL,
+        method: "GET"
+      })
+      var relatedTable = $("<table class='u-full-width'>");
+      var relatedTableHead = $("<thead>");
+      relatedTable.append(relatedTableHead);
+      var relatedTableHeadRow = $("<tr>");
+      relatedTableHead.append(relatedTableHeadRow);
+      var headArtist = $("<th>").text("Artist Name").addClass("modalEl");
+      relatedTableHeadRow.append(headArtist);
+      var headWiki = $("<th>").text("Artist's Wiki Page").addClass("modalEl");
+      relatedTableHeadRow.append(headWiki);
+      var headVideo = $("<th>").text("YouTube Video").addClass("modalEl");
+      relatedTableHeadRow.append(headVideo);
+      var relatedTableBody = $("<tbody>");
+      relatedTable.append(relatedTableBody);
+
+      for (i=0; i<5; i++){
+          var getArtistName = artistResponse.Similar.Results[i].Name;
+          if (typeof(getArtistName) == 'undefined'){
+              var noRelated = $("<tr>").text("No Related Artists Found");
+              noRelated.addClass("noArtistFound");
+              relatedTable.empty();
+              relatedTable.append(noRelated);
+          }else{
+          var bodyTableRow = $("<tr>");
+          var bodyArtistName = $("<td>").text(getArtistName).addClass("modalEl");
+          bodyTableRow.append(bodyArtistName);
+          var getArtistWiki = artistResponse.Similar.Results[i].wUrl;
+          var bodyArtistWiki = $("<td>").html("<a href='"+getArtistWiki+"' target='_blank'>Artist Wiki</a>").addClass("modalEl");
+          bodyTableRow.append(bodyArtistWiki);
+          var getArtistVideo = artistResponse.Similar.Results[i].yID;
+          var bodyArtistVideo = $("<td>").html("<iframe width='560' height='315' src='https://www.youtube.com/embed/" + getArtistVideo + "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>").addClass("modalEl");
+          bodyTableRow.append(bodyArtistVideo);
+
+          relatedTableBody.append(bodyTableRow);
+      }
+    console.log(artistResponse);
+    // console.log(artistResponse.Similar.Results);
+    
+    $("#related-artists").html(relatedTable);
+      }
 }
 
+// When the user clicks the Search Again button, reload the page
+$(".resultsBtns").on("click", "#searchAgain", function(){
+    // location.reload(true);
+    var artistSearch = $("#artistSearch");
+    artistSearch.focus();
+    artistSearch.val("");
+});
+
+// When the user clicks the button, open the modal 
+$(".resultsBtns").on("click", "#relatedArtists", function() {
+    $("#myModal").show();
+    renderRelatedArtists();
+});
+
+// When the user clicks on <span> (x), close the modal
+$(".close").on("click", function() {
+    $("#myModal").hide();
+});
+
+// When the user clicks anywhere outside of the modal, close it
+$(".modal-click-catcher").on("click", function() {
+//   if (event.target == $("#myModal")) {
+    $("#myModal").hide();
+//   }
+})
+
+});
